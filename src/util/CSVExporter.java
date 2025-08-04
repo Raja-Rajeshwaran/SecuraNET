@@ -7,7 +7,7 @@ import java.util.List;
 public class CSVExporter {
 	// In CSVExporter.java
 	public static void export(String filename, List<String[]> data) throws IOException {
-	    String exportPath = "C:\\Users\\LENOVO\\eclipse-workspace\\SecuraNET\\exports\\" + filename; // Windows
+	    String exportPath = "C:\\Downloads\\" + filename; // Windows
 	    // String exportPath = "/home/user/securanet/exports/" + filename; // Linux/Mac
 	    
 	    try (FileWriter writer = new FileWriter(exportPath)) {
