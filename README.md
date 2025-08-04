@@ -197,7 +197,7 @@ This project is for educational purposes. Feel free to modify and extend for you
 
 ## 👨‍�� Creator
 
-**Created by [Your Name]**
+**Created by RR**
 
 A comprehensive Java console application demonstrating:
 - Object-Oriented Programming principles
