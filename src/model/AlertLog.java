@@ -19,7 +19,6 @@ public class AlertLog {
         this.userId = userId;
     }
 
-    // Getters and setters
     public int getLogId() { return logId; }
     public Timestamp getTimestamp() { return timestamp; }
     public String getSeverity() { return severity; }

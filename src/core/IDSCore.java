@@ -32,9 +32,4 @@ public class IDSCore {
             System.out.println("No threats detected.");
         }
     }
-
-    // Future: ML-based anomaly detection stub
-    public void runMLDetection(String input) {
-        System.out.println("ML-based anomaly detection is not yet implemented.");
-    }
 }

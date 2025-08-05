@@ -14,20 +14,20 @@ public class Main {
     private static IDSCore idsCore = new IDSCore(threatManager, alertManager);
 
     public static void main(String[] args) {
-        System.out.println("=== Welcome to Securanet IDS ===");
+        System.out.println("===== Welcome to Securanet IDS =====");
         User user = null;
         while (user == null) {
             String username = ConsoleUtils.readLine("Username: ");
             String password = ConsoleUtils.readPassword("Password: ");
             user = userManager.authenticate(username, password);
             if (user == null) {
-                System.out.println("Invalid credentials. Try again.");
+                System.out.println("Invalid credentials. Please try again.");
             }
         }
-        System.out.println("Login successful! Role: " + user.getRole());
+        System.out.println("Login successful!"+ "\n" +"Your role: " + user.getRole());
         userManager.incrementStreak(user.getUserId());
 
-        if (user.getRole().equals("admin")) {
+        if (user.getRole().equalsIgnoreCase("admin")) {
             adminMenu(user);
         } else {
             userMenu(user);
@@ -36,7 +36,7 @@ public class Main {
 
     private static void adminMenu(User user) {
         while (true) {
-            System.out.println("\n--- Admin Dashboard ---");
+            System.out.println("\n----- Admin Dashboard -----");
             System.out.println("1. Manage Users");
             System.out.println("2. Manage Threats");
             System.out.println("3. View/Export Alerts");
@@ -66,7 +66,7 @@ public class Main {
 
     private static void userMenu(User user) {
         while (true) {
-            System.out.println("\n--- User Dashboard ---");
+            System.out.println("\n----- User Dashboard -----");
             System.out.println("1. View Threats");
             System.out.println("2. View/Acknowledge Alerts");
             System.out.println("3. Simulate Scan");
@@ -75,7 +75,7 @@ public class Main {
             System.out.println("6. View Profile Streak");
             System.out.println("7. Creator Credit");
             System.out.println("0. Logout");
-            int choice = ConsoleUtils.readInt("Select: ");
+            int choice = ConsoleUtils.readInt("Select your choice: ");
             switch (choice) {
                 case 1: viewThreats(); break;
                 case 2: viewAcknowledgeAlerts(user); break;
@@ -90,16 +90,15 @@ public class Main {
         }
     }
 
-    // --- User Management ---
     private static void manageUsers() {
         while (true) {
-            System.out.println("\n--- User Management ---");
+            System.out.println("\n----- User Management -----");
             System.out.println("1. Add User");
             System.out.println("2. Update User");
             System.out.println("3. Delete User");
             System.out.println("4. View Users");
             System.out.println("0. Back");
-            int choice = ConsoleUtils.readInt("Select your choic: ");
+            int choice = ConsoleUtils.readInt("Select your choice: ");
             switch (choice) {
                 case 1:
                     String uname = ConsoleUtils.readLine("Username: ");
@@ -131,10 +130,9 @@ public class Main {
         }
     }
 
-    // --- Threat Management ---
     private static void manageThreats() {
         while (true) {
-            System.out.println("\n--- Threat Management ---");
+            System.out.println("\n----- Threat Management -----");
             System.out.println("1. Add Threat");
             System.out.println("2. Update Threat");
             System.out.println("3. Delete Threat");
@@ -169,7 +167,6 @@ public class Main {
         }
     }
 
-    // --- Alerts ---
     private static void viewExportAlerts() {
         List<AlertLog> alerts = alertManager.getAllAlerts();
         for (AlertLog a : alerts) {
@@ -214,27 +211,23 @@ public class Main {
         }
     }
 
-    // --- Threats View ---
     private static void viewThreats() {
         for (Threat t : threatManager.getAllThreats()) {
             System.out.println("ID: " + t.getThreatId() + " | " + t.getName() + " | " + t.getDescription() + " | Severity: " + t.getSeverity());
         }
     }
 
-    // --- Simulate Scan ---
     private static void simulateScan(User user) {
         String input = ConsoleUtils.readLine("Enter data to scan: ");
         idsCore.simulateScan(input, user);
     }
 
-    // --- Password Change ---
     private static void changePassword(User user) {
         String newPwd = ConsoleUtils.readPassword("New Password: ");
         if (userManager.changePassword(user.getUserId(), newPwd)) System.out.println("Password changed.");
         else System.out.println("Failed to change password.");
     }
 
-    // --- Feedback ---
     private static void submitFeedback(User user) {
         String msg = ConsoleUtils.readLine("Enter feedback: ");
         if (feedbackManager.addFeedback(user.getUserId(), msg)) System.out.println("Feedback submitted.");

@@ -15,7 +15,6 @@ public class User {
         this.streak = streak;
     }
 
-    // Getters and setters
     public int getUserId() { return userId; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }

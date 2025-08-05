@@ -17,7 +17,6 @@ public class ConsoleUtils {
             char[] passwordChars = console.readPassword(prompt);
             return new String(passwordChars);
         } else {
-            // Fallback for IDEs that don't support console
             System.out.print(prompt);
             return scanner.nextLine();
         }
@@ -29,7 +28,7 @@ public class ConsoleUtils {
             try {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Try again: ");
+                System.out.print("Invalid input. Please try again: ");
             }
         }
     }

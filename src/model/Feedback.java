@@ -15,7 +15,6 @@ public class Feedback {
         this.timestamp = timestamp;
     }
 
-    // Getters and setters
     public int getFeedbackId() { return feedbackId; }
     public int getUserId() { return userId; }
     public String getMessage() { return message; }
