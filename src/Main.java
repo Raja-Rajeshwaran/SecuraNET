@@ -2,7 +2,6 @@ import manager.*;
 import core.*;
 import model.*;
 import util.*;
-
 import java.util.*;
 import java.io.IOException;
 
@@ -12,7 +11,7 @@ public class Main {
     private static AlertManager alertManager = new AlertManager();
     private static FeedbackManager feedbackManager = new FeedbackManager();
     private static IDSCore idsCore = new IDSCore(threatManager, alertManager);
-
+    
     public static void main(String[] args) {
         System.out.println("===== Welcome to Securanet IDS =====");
         User user = null;
@@ -26,14 +25,13 @@ public class Main {
         }
         System.out.println("Login successful!"+ "\n" +"Your role: " + user.getRole());
         userManager.incrementStreak(user.getUserId());
-
         if (user.getRole().equalsIgnoreCase("admin")) {
             adminMenu(user);
         } else {
             userMenu(user);
         }
     }
-
+    
     private static void adminMenu(User user) {
         while (true) {
             System.out.println("\n----- Admin Dashboard -----");
@@ -58,12 +56,12 @@ public class Main {
                 case 7: submitFeedback(user); break;
                 case 8: System.out.println("Profile streak: " + user.getStreak()); break;
                 case 9: System.out.println("Created by RR"); break;
-                case 0: System.out.println("Thank you!"); System.exit(0);
+                case 0: System.out.println("Thank you!"); return;
                 default: System.out.println("Invalid choice.");
             }
         }
     }
-
+    
     private static void userMenu(User user) {
         while (true) {
             System.out.println("\n----- User Dashboard -----");
@@ -89,7 +87,7 @@ public class Main {
             }
         }
     }
-
+    
     private static void manageUsers() {
         while (true) {
             System.out.println("\n----- User Management -----");
@@ -104,24 +102,49 @@ public class Main {
                     String uname = ConsoleUtils.readLine("Username: ");
                     String pwd = ConsoleUtils.readPassword("Password: ");
                     String role = ConsoleUtils.readLine("Role (admin/user): ");
-                    if (userManager.addUser(uname, pwd, role)) System.out.println("User added.");
-                    else System.out.println("Failed to add user.");
+                    if (userManager.addUser(uname, pwd, role)) {
+                        System.out.println("User added successfully.");
+                        System.out.println("Username: " + uname);
+                        System.out.println("Password: " + PasswordUtils.maskPassword(pwd));
+                        System.out.println("Role: " + role);
+                    } else {
+                        System.out.println("Failed to add user.");
+                    }
                     break;
                 case 2:
                     int uid = ConsoleUtils.readInt("User ID: ");
                     String newUname = ConsoleUtils.readLine("New Username: ");
                     String newRole = ConsoleUtils.readLine("New Role (admin/user): ");
-                    if (userManager.updateUser(uid, newUname, newRole)) System.out.println("User updated.");
-                    else System.out.println("Failed to update user.");
+                    if (userManager.updateUser(uid, newUname, newRole)) {
+                        System.out.println("User updated successfully.");
+                        System.out.println("Username: " + newUname);
+                        System.out.println("Role: " + newRole);
+                    } else {
+                        System.out.println("Failed to update user.");
+                    }
                     break;
                 case 3:
                     int delUid = ConsoleUtils.readInt("User ID: ");
-                    if (userManager.deleteUser(delUid)) System.out.println("User deleted.");
-                    else System.out.println("Failed to delete user.");
+                    if (userManager.deleteUser(delUid)) {
+                        System.out.println("User deleted successfully.");
+                    } else {
+                        System.out.println("Failed to delete user.");
+                    }
                     break;
                 case 4:
-                    for (User u : userManager.getAllUsers()) {
-                        System.out.println("ID: " + u.getUserId() + " | " + u.getUsername() + " | Role: " + u.getRole() + " | Streak: " + u.getStreak());
+                    System.out.println("\n----- User List -----");
+                    System.out.println("S.No | Username | Role | Streak | Password");
+                    System.out.println("-----------------------------------------");
+                    
+                    List<User> users = userManager.getAllUsers();
+                    for (int i = 0; i < users.size(); i++) {
+                        User u = users.get(i);
+                        System.out.printf("%-3d | %-8s | %-7s | %-3d | %s%n",
+                                (i + 1),  // Serial number starting from 1
+                                u.getUsername(),
+                                u.getRole(),
+                                u.getStreak(),
+                                "*".repeat(u.getPasswordLength()));
                     }
                     break;
                 case 0: return;
@@ -129,7 +152,7 @@ public class Main {
             }
         }
     }
-
+    
     private static void manageThreats() {
         while (true) {
             System.out.println("\n----- Threat Management -----");
@@ -138,27 +161,42 @@ public class Main {
             System.out.println("3. Delete Threat");
             System.out.println("4. View Threats");
             System.out.println("0. Back");
-            int choice = ConsoleUtils.readInt("Select: ");
+            int choice = ConsoleUtils.readInt("Select your choice: ");
             switch (choice) {
                 case 1:
                     String name = ConsoleUtils.readLine("Threat Name: ");
                     String desc = ConsoleUtils.readLine("Description: ");
                     String sev = ConsoleUtils.readLine("Severity (Low/Medium/High): ");
-                    if (threatManager.addThreat(name, desc, sev)) System.out.println("Threat added.");
-                    else System.out.println("Failed to add threat.");
+                    if (threatManager.addThreat(name, desc, sev)) {
+                        System.out.println("Threat added successfully.");
+                        System.out.println("Name: " + name);
+                        System.out.println("Description: " + desc);
+                        System.out.println("Severity: " + sev);
+                    } else {
+                        System.out.println("Failed to add threat.");
+                    }
                     break;
                 case 2:
                     int tid = ConsoleUtils.readInt("Threat ID: ");
                     String nname = ConsoleUtils.readLine("New Name: ");
                     String ndesc = ConsoleUtils.readLine("New Description: ");
                     String nsev = ConsoleUtils.readLine("New Severity (Low/Medium/High): ");
-                    if (threatManager.updateThreat(tid, nname, ndesc, nsev)) System.out.println("Threat updated.");
-                    else System.out.println("Failed to update threat.");
+                    if (threatManager.updateThreat(tid, nname, ndesc, nsev)) {
+                        System.out.println("Threat updated successfully.");
+                        System.out.println("Name: " + nname);
+                        System.out.println("Description: " + ndesc);
+                        System.out.println("Severity: " + nsev);
+                    } else {
+                        System.out.println("Failed to update threat.");
+                    }
                     break;
                 case 3:
                     int delTid = ConsoleUtils.readInt("Threat ID: ");
-                    if (threatManager.deleteThreat(delTid)) System.out.println("Threat deleted.");
-                    else System.out.println("Failed to delete threat.");
+                    if (threatManager.deleteThreat(delTid)) {
+                        System.out.println("Threat deleted successfully.");
+                    } else {
+                        System.out.println("Failed to delete threat.");
+                    }
                     break;
                 case 4: viewThreats(); break;
                 case 0: return;
@@ -166,9 +204,10 @@ public class Main {
             }
         }
     }
-
+    
     private static void viewExportAlerts() {
         List<AlertLog> alerts = alertManager.getAllAlerts();
+        System.out.println("\n----- Alert Logs -----");
         for (AlertLog a : alerts) {
             System.out.println("LogID: " + a.getLogId() + " | Time: " + a.getTimestamp() + " | Severity: " + a.getSeverity() +
                 " | ThreatID: " + a.getThreatId() + " | Ack: " + a.isAcknowledged() + " | UserID: " + a.getUserId());
@@ -195,9 +234,10 @@ public class Main {
             }
         }
     }
-
+    
     private static void viewAcknowledgeAlerts(User user) {
         List<AlertLog> alerts = alertManager.getAllAlerts();
+        System.out.println("\n----- Your Alerts -----");
         for (AlertLog a : alerts) {
             if (a.getUserId() == user.getUserId()) {
                 System.out.println("LogID: " + a.getLogId() + " | Time: " + a.getTimestamp() + " | Severity: " + a.getSeverity() +
@@ -206,35 +246,62 @@ public class Main {
         }
         int ackId = ConsoleUtils.readInt("Enter LogID to acknowledge (0 to skip): ");
         if (ackId != 0) {
-            if (alertManager.acknowledgeAlert(ackId)) System.out.println("Alert acknowledged.");
-            else System.out.println("Failed to acknowledge alert.");
+            if (alertManager.acknowledgeAlert(ackId)) {
+                System.out.println("Alert acknowledged successfully.");
+            } else {
+                System.out.println("Failed to acknowledge alert.");
+            }
         }
     }
-
+    
     private static void viewThreats() {
-        for (Threat t : threatManager.getAllThreats()) {
-            System.out.println("ID: " + t.getThreatId() + " | " + t.getName() + " | " + t.getDescription() + " | Severity: " + t.getSeverity());
+        System.out.println("\n----- Threat List -----");
+        System.out.println("S.No | Threat Name | Severity | Description");
+        System.out.println("------------------------------------------------");
+        
+        List<Threat> threats = threatManager.getAllThreats();
+        for (int i = 0; i < threats.size(); i++) {
+            Threat t = threats.get(i);
+            String description = t.getDescription();
+            if (description.length() > 100) {
+                description = description.substring(0, 50) + "...";
+            }
+            
+            System.out.printf("%-5d | %-30s | %-10s | %s%n",
+                    (i + 1), 
+                    t.getName(),
+                    t.getSeverity(),
+                    description);
         }
     }
-
+    
     private static void simulateScan(User user) {
         String input = ConsoleUtils.readLine("Enter data to scan: ");
         idsCore.simulateScan(input, user);
     }
-
+    
     private static void changePassword(User user) {
         String newPwd = ConsoleUtils.readPassword("New Password: ");
-        if (userManager.changePassword(user.getUserId(), newPwd)) System.out.println("Password changed.");
-        else System.out.println("Failed to change password.");
+        if (userManager.changePassword(user.getUserId(), newPwd)) {
+            System.out.println("Password changed successfully.");
+            System.out.println("New Password: " + PasswordUtils.maskPassword(newPwd));
+        } else {
+            System.out.println("Failed to change password.");
+        }
     }
-
+    
     private static void submitFeedback(User user) {
         String msg = ConsoleUtils.readLine("Enter feedback: ");
-        if (feedbackManager.addFeedback(user.getUserId(), msg)) System.out.println("Feedback submitted.");
-        else System.out.println("Failed to submit feedback.");
+        if (feedbackManager.addFeedback(user.getUserId(), msg)) {
+            System.out.println("Feedback submitted successfully.");
+            System.out.println("Feedback: " + msg);
+        } else {
+            System.out.println("Failed to submit feedback.");
+        }
     }
-
+    
     private static void viewFeedback() {
+        System.out.println("\n----- Feedback List -----");
         for (Feedback f : feedbackManager.getAllFeedback()) {
             System.out.println("ID: " + f.getFeedbackId() + " | UserID: " + f.getUserId() + " | " + f.getMessage() + " | " + f.getTimestamp());
         }
